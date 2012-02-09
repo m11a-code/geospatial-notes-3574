@@ -59,7 +59,7 @@
 		view.add(bLocation);
 
 		var bOutbox = Ti.UI.createButton({
-			title : 'outbox',
+			title : 'Outbox',
 			height : 60,
 			width : '30%',
 			bottom : 10
@@ -71,7 +71,7 @@
 		view.add(bOutbox);
 
 		var bOptions = Ti.UI.createButton({
-			title : 'options',
+			title : 'Options',
 			height : 60,
 			width : '30%',
 			bottom : 10,
@@ -89,7 +89,7 @@
 
 	gn.ui.createInboxWindow = function() {
 		var win = Ti.UI.createWindow({
-			title : 'inbox',
+			title : 'Inbox',
 			backgroundColor : 'blue'
 		});
 
@@ -101,7 +101,7 @@
 		});
 
 		var b = Ti.UI.createButton({
-			title : 'back',
+			title : 'Back',
 			height : 60,
 			width : '90%',
 			bottom : 10
@@ -117,7 +117,7 @@
 
 	gn.ui.createOutboxWindow = function() {
 		var win = Ti.UI.createWindow({
-			title : 'outbox',
+			title : 'Outbox',
 			backgroundColor : 'blue'
 		});
 
@@ -129,7 +129,7 @@
 		});
 
 		var b = Ti.UI.createButton({
-			title : 'back',
+			title : 'Back',
 			height : 60,
 			width : '90%',
 			bottom : 10
@@ -145,7 +145,7 @@
 
 	gn.ui.createOptionsWindow = function() {
 		var win = Ti.UI.createWindow({
-			title : 'options',
+			title : 'Options',
 			backgroundColor : 'blue'
 		});
 
@@ -157,7 +157,7 @@
 		});
 
 		var b = Ti.UI.createButton({
-			title : 'back',
+			title : 'Back',
 			height : 60,
 			width : '90%',
 			bottom : 10
