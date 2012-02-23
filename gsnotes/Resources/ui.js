@@ -1,21 +1,33 @@
 (function() {
+	
 	gn.ui = {};
-
+	
 	gn.ui.createWelcomeScreen = function() {
 		var win = Ti.UI.createWindow({
 			title : 'welcome_screen',
-			//layout:'vertical',
-			backgroundColor : 'red'
+			backgroundColor : 'red',
 		});
-
-		var view = Titanium.UI.createView({
+		
+		var activity = Ti.Android.currentActivity;
+		
+		activity.onCreateOptionsMenu = function(e) {
+			var menu = e.menu;
+			var menuItem = menu.add({ title: "Settings" });
+				menuItem.setIcon(Titanium.Android.R.drawable.ic_menu_preferences);
+				menuItem.addEventListener("click", function(e) {
+					var settingsWindow = gn.ui.createSettingsWindow();
+					settingsWindow.open();
+			});
+		}
+	
+		/*var view = Titanium.UI.createView({
 			borderRadius : 10,
 			width : '95%',
 			height : '95%',
 			backgroundColor : 'red'
-		});
+		});*/
 
-		view.add(Titanium.Facebook.createLoginButton({
+		win.add(Titanium.Facebook.createLoginButton({
 			top : 50,
 			style : 'wide'
 		}));
@@ -31,7 +43,7 @@
 			var winInbox = gn.ui.createInboxWindow();
 			winInbox.open();
 		});
-		view.add(bInbox);
+		win.add(bInbox);
 
 		var bGeolocation = Ti.UI.createButton({
 			title : 'Geolocation',
@@ -44,7 +56,7 @@
 			var winGeolocation = gn.ui.createGeolocationWindow();
 			winGeolocation.open();
 		});
-		view.add(bGeolocation);
+		win.add(bGeolocation);
 
 		var bLocation = Ti.UI.createButton({
 			title : 'Location',
@@ -56,7 +68,7 @@
 			var winLocation = gn.ui.createLocationWindow();
 			winLocation.open();
 		});
-		view.add(bLocation);
+		win.add(bLocation);
 
 		var bOutbox = Ti.UI.createButton({
 			title : 'Outbox',
@@ -68,7 +80,7 @@
 			var winOutbox = gn.ui.createOutboxWindow();
 			winOutbox.open();
 		});
-		view.add(bOutbox);
+		win.add(bOutbox);
 
 		var bOptions = Ti.UI.createButton({
 			title : 'Options',
@@ -81,9 +93,129 @@
 			var winOptions = gn.ui.createOptionsWindow();
 			winOptions.open();
 		});
-		view.add(bOptions);
-		win.add(view);
+		win.add(bOptions);
+		//win.add(view);
 
+		return win;
+	};
+	
+	gn.ui.createSettingsWindow = function() {
+		var win = Ti.UI.createWindow({
+			title : 'settings_screen',
+			//fullscreen: true,
+			backgroundColor : 'green'
+		});
+		
+		var b = Ti.UI.createButton({
+			title : 'Back',
+			height : 60,
+			width : '70%',
+			bottom : 10
+		});
+		b.addEventListener('click', function() {
+			win.close();
+		});
+		
+		//rows
+		
+		var valuesColTen = [];
+ 
+		for (var i = 0; i < 11; i++) {
+		    valuesColTen.push(Ti.UI.createPickerRow({title: i+'', value:i}));
+		}
+		
+		var valuesColHundred = [];
+		
+		for (var i = 0; i < 100; i=i+5) {
+		    valuesColHundred.push(Ti.UI.createPickerRow({title: "."+i+" mi", value:i}));
+		}
+		
+		//columns
+		
+		var columnValuesTen = Ti.UI.createPickerColumn( {
+		    rows: valuesColTen, font: {fontSize: "12"}, width: '30%'
+		});
+ 
+		var columnValuesHundred = Ti.UI.createPickerColumn( {
+		    rows: valuesColHundred, font: {fontSize: "12"}, width: '70%'
+		});
+ 
+		var picker = Ti.UI.createPicker({
+			width: '100%',
+			top: '20%',
+		    useSpinner: true,
+		    selectionIndicator: true,
+		    columns: [columnValuesTen, columnValuesHundred]
+		});
+		
+		var noteFilterButton = Ti.UI.createButton({
+			title : 'Note Filters',
+			width : '30%',
+			bottom : 80
+		});
+		noteFilterButton.addEventListener('click', function() {
+			var noteFilterWindow = gn.ui.createNoteFilterWindow();
+			noteFilterWindow.open();
+		});
+ 
+		// turn on the selection indicator (off by default)
+		win.add(picker);
+		win.add(noteFilterButton);
+		win.add(b);
+		
+		return win;
+	};
+	
+	gn.ui.createNoteFilterWindow = function() {
+		var win = Ti.UI.createWindow({
+			fullscreen: true,
+			backgroundColor: 'black',
+			opacity: 0.6,
+			height: '100%',
+			width : '100%'
+		});
+		
+		var tempView = Ti.UI.createView({
+			backgroundColor: 'gray',
+			height: '40%',
+			left: '3%',
+			right: '3%'
+		});
+		
+		var tableData = [
+		    Titanium.UI.createTableViewRow({title:'Facebook Friends\' Notes',hasCheck:false,font:{fontSize:'12dp',fontFamily:'Helvetica Neue',fontWeight:'bold',fontColor:'black'},color: 'black',header: "View Filters: Touch to toggle"}),
+		    Titanium.UI.createTableViewRow({title:'My Notes',hasCheck:false,font:{fontSize:'12dp',fontFamily:'Helvetica Neue',fontWeight:'bold',fontColor:'black'},color: 'black'}),
+		    Titanium.UI.createTableViewRow({title:'Public Notes',hasCheck:false,font:{fontSize:'12dp',fontFamily:'Helvetica Neue',fontWeight:'bold',fontColor:'black'},color: 'black'}),
+		];
+				 
+		var tableView = Titanium.UI.createTableView({
+		    data : tableData,
+		    backgroundColor: 'gray',
+		    color: 'black',
+		    font:{fontSize:'12dp',fontFamily:'Helvetica Neue',fontWeight:'bold',fontColor:'black'} 
+		});
+		
+		//unchecking one unchecks all which needs to be fixed
+		//need to get better grasp of windows and how they work with back button
+			//windows, views, when back exits app, when it doesn't, etc...
+		//need to implememnt database and keep toggling info persistant
+		//make UI components operate and flow smoother
+		//need to get grasp of separating information into files more efficiently
+		 
+		tableView.addEventListener('click', function(e){
+		    if(e.row.hasCheck){
+		        for(var i in tableData){
+		            tableData[i].hasCheck = false;
+		        }
+		        tableView.data = tableData;
+		    } else {
+		        tableData[e.index].hasCheck = true;
+		        tableView.data = tableData;
+		    }
+		});
+		
+		tempView.add(tableView);
+		win.add(tempView);
 		return win;
 	};
 
