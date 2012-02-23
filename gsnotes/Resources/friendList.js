@@ -93,5 +93,6 @@ friendList.showFriends = function() {
 	}
 	
 	friendWindow.add( friendTable );
+	// Won't show up!?
 	friendWindow.open();
 }
