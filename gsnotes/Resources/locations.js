@@ -3,12 +3,18 @@
 	gn.ui.createLocationWindow = function() {
 		var win = Ti.UI.createWindow({
 			title : 'inbox',
-			backgroundColor : 'blue'
+			backgroundColor : 'blue',
+			exitOnClose:false,
+			fullscreen:false
+		});
+		
+		win.addEventListener('android:back',function(){
+			win.close();
 		});
 
 		var latitudeField = Titanium.UI.createTextField({
 			color : '#336699',
-			height : 45,
+			height : 55,
 			bottom : 260,
 			borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 			clearOnEdit : true,
@@ -18,10 +24,20 @@
 
 		var longitudeField = Titanium.UI.createTextField({
 			color : '#336699',
-			height : 45,
+			height : 55,
 			bottom : 210,
 			width : 250,
 			hintText : 'Longitude',
+			borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+			clearOnEdit : true,
+		});
+		
+		var noteField = Titanium.UI.createTextField({
+			color : '#336699',
+			height : 55,
+			bottom : 315,
+			width : 250,
+			hintText : 'Type your note',
 			borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 			clearOnEdit : true,
 		});
@@ -33,34 +49,27 @@
 			bottom : 130
 		});
 		saveButton.addEventListener('click', function() {
-				Ti.App.Properties.setString("latitude", latitudeField.value);
-				Ti.App.Properties.setString('longitude', longitudeField.value);
+				Ti.App.Properties.setString(latitudeField.value, noteField.value);
+				Ti.App.Properties.setString(longitudeField.value, noteField.value);
 		});
 		var recallButton = Ti.UI.createButton({
-			title : 'Recall Location',
+			title : 'Recall note',
 			height : 60,
 			width : '90%',
 			bottom : 70
 		});
 		recallButton.addEventListener('click', function() {
-			latitudeField.setValue(Ti.App.Properties.getString('latitude', ''));
-			longitudeField.setValue(Ti.App.Properties.getString('longitude', ''));
+			var latNote = Ti.App.Properties.getString(latitudeField.value, '-1');
+			var longNote = Ti.App.Properties.getString(longitudeField.value, '-2');
+			if(longNote === latNote){
+				noteField.setValue(Ti.App.Properties.getString(longitudeField.value, ''));
+			}
 		});
 		win.add(latitudeField);
+		win.add(noteField);
 		win.add(longitudeField);
 		win.add(saveButton);
 		win.add(recallButton);
-		var b = Ti.UI.createButton({
-			title : 'back',
-			height : 60,
-			width : '90%',
-			bottom : 10
-		});
-		b.addEventListener('click', function() {
-			win.close();
-		});
-		win.add(b);
-
 		return win;
 	};
 })();

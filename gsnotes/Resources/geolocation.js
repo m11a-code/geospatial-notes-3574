@@ -2,21 +2,17 @@
 (function() {
 	gn.ui = gn.ui || {};
 	gn.ui.createGeolocationWindow = function() {
-
+		
+		
 		var win = Titanium.UI.createWindow({
-			backgroundColor : '#fff'
+			backgroundColor : '#fff',
+			exitOnClose:false,
+			fullscreen:false
 		});
-		var b = Ti.UI.createButton({
-			title : 'back',
-			height : 60,
-			width : '90%',
-			bottom : 10
-		});
-		b.addEventListener('click', function() {
+		
+		win.addEventListener('android:back',function(){
 			win.close();
 		});
-		win.add(b);
-
 		//Create two global variables to store latitude and longitude
 		//Since updating the GPS is asynchronous, to use a button to display the position
 		//the position has to be stored outside of the function which checks it.  The reason

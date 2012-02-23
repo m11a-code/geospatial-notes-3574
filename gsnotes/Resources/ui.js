@@ -5,7 +5,9 @@
 	gn.ui.createWelcomeScreen = function() {
 		var win = Ti.UI.createWindow({
 			title : 'welcome_screen',
-			backgroundColor : 'red',
+			backgroundColor : 'black',
+			exitOnClose:true,
+			fullscreen:false
 		});
 		
 		var activity = Ti.Android.currentActivity;
@@ -20,13 +22,6 @@
 			});
 		}
 	
-		/*var view = Titanium.UI.createView({
-			borderRadius : 10,
-			width : '95%',
-			height : '95%',
-			backgroundColor : 'red'
-		});*/
-
 		win.add(Titanium.Facebook.createLoginButton({
 			top : 50,
 			style : 'wide'
@@ -71,13 +66,13 @@
 		win.add(bLocation);
 
 		var bOutbox = Ti.UI.createButton({
-			title : 'Outbox',
+			title : 'Friends',
 			height : 60,
 			width : '30%',
 			bottom : 10
 		});
 		bOutbox.addEventListener('click', function() {
-			var winOutbox = gn.ui.createOutboxWindow();
+			var winOutbox = gn.ui.createFriendsWindow();
 			winOutbox.open();
 		});
 		win.add(bOutbox);
@@ -103,18 +98,11 @@
 		var win = Ti.UI.createWindow({
 			title : 'settings_screen',
 			//fullscreen: true,
-			backgroundColor : 'green'
+			backgroundColor : 'green',
+			exitOnClose:false,
+			fullscreen:false
 		});
 		
-		var b = Ti.UI.createButton({
-			title : 'Back',
-			height : 60,
-			width : '70%',
-			bottom : 10
-		});
-		b.addEventListener('click', function() {
-			win.close();
-		});
 		
 		//rows
 		
@@ -161,7 +149,6 @@
 		// turn on the selection indicator (off by default)
 		win.add(picker);
 		win.add(noteFilterButton);
-		win.add(b);
 		
 		return win;
 	};
@@ -172,7 +159,9 @@
 			backgroundColor: 'black',
 			opacity: 0.6,
 			height: '100%',
-			width : '100%'
+			width : '100%',
+			exitOnClose:false,
+			fullscreen:false
 		});
 		
 		var tempView = Ti.UI.createView({
@@ -222,26 +211,18 @@
 	gn.ui.createInboxWindow = function() {
 		var win = Ti.UI.createWindow({
 			title : 'Inbox',
-			backgroundColor : 'blue'
+			backgroundColor : 'white',
+			exitOnClose:false,
+			fullscreen:false
 		});
 
 		var view = Titanium.UI.createView({
 			borderRadius : 10,
 			width : '95%',
 			height : '95%',
-			backgroundColor : 'red'
+			backgroundColor : 'black'
 		});
 
-		var b = Ti.UI.createButton({
-			title : 'Back',
-			height : 60,
-			width : '90%',
-			bottom : 10
-		});
-		b.addEventListener('click', function() {
-			win.close();
-		});
-		view.add(b);
 		win.add(view);
 
 		return win;
@@ -250,26 +231,17 @@
 	gn.ui.createOutboxWindow = function() {
 		var win = Ti.UI.createWindow({
 			title : 'Outbox',
-			backgroundColor : 'blue'
+			backgroundColor : 'white',
+			exitOnClose:false,
+			fullscreen:false
 		});
 
 		var view = Titanium.UI.createView({
 			borderRadius : 10,
 			width : '95%',
 			height : '95%',
-			backgroundColor : 'red'
+			backgroundColor : 'black'
 		});
-
-		var b = Ti.UI.createButton({
-			title : 'Back',
-			height : 60,
-			width : '90%',
-			bottom : 10
-		});
-		b.addEventListener('click', function() {
-			win.close();
-		});
-		view.add(b);
 		win.add(view);
 
 		return win;
@@ -278,28 +250,19 @@
 	gn.ui.createOptionsWindow = function() {
 		var win = Ti.UI.createWindow({
 			title : 'Options',
-			backgroundColor : 'blue'
+			backgroundColor : 'white',
+			exitOnClose:false,
+			fullscreen:false
 		});
 
 		var view = Titanium.UI.createView({
 			borderRadius : 10,
 			width : '95%',
 			height : '95%',
-			backgroundColor : 'red'
+			backgroundColor : 'black'
 		});
 
-		var b = Ti.UI.createButton({
-			title : 'Back',
-			height : 60,
-			width : '90%',
-			bottom : 10
-		});
-		b.addEventListener('click', function() {
-			win.close();
-		});
 		win.add(view);
-		view.add(b);
-
 		return win;
 	};
 })();
