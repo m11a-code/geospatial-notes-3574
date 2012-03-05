@@ -85,7 +85,7 @@
 			right : 10
 		});
 		bOptions.addEventListener('click', function() {
-			var winOptions = gn.ui.createOptionsWindow();
+			var winOptions = gn.ui.createSettingsWindow();
 			winOptions.open();
 		});
 		win.add(bOptions);
