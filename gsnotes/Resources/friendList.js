@@ -30,6 +30,7 @@
 					height : 'auto',
 					backgroundColor : bgColor,
 					title : fullname
+					//className
 				});
 
 				// Add a listener for that row
