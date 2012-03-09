@@ -6,7 +6,7 @@
 		var friendWindow = Ti.UI.createWindow({
 			backgroundColor : '#FFF',
 			exitOnClose : false,
-			fullscreen:false
+			fullscreen : false
 		});
 
 		friendWindow.addEventListener('open', function() {
@@ -29,8 +29,8 @@
 				var tvRow = Ti.UI.createTableViewRow({
 					height : 'auto',
 					backgroundColor : bgColor,
-					title : fullname
-					//className
+					title : fullname,
+					className : 'foo' //it doesn't matter what this is, it just needs to be a string and the same for all rows that are the same
 				});
 
 				// Add a listener for that row

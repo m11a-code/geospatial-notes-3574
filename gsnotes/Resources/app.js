@@ -1,11 +1,7 @@
 Titanium.UI.setBackgroundColor('#ffffff');
 
 var gn = gn || {};
-Ti.include('ui.js');
-Ti.include('geolocation.js');
-Ti.include('locations.js');
-Ti.include('friendList.js');
-
+Ti.include('friendList.js', 'record.js', 'locations.js', 'geolocation.js', 'ui.js');
 
 Titanium.Facebook.appid = '166092423474222';
 Titanium.Facebook.permissions = ['read_stream', 'manage_pages'];

@@ -4,14 +4,13 @@
 		var win = Ti.UI.createWindow({
 			title : 'inbox',
 			backgroundColor : 'blue',
-			exitOnClose:false,
-			fullscreen:false
-		});
-		
-		win.addEventListener('android:back',function(){
-			win.close();
+			exitOnClose : false,
+			fullscreen : false
 		});
 
+		win.addEventListener('android:back', function() {
+			win.close();
+		});
 		var latitudeField = Titanium.UI.createTextField({
 			color : '#336699',
 			height : 55,
@@ -31,7 +30,7 @@
 			borderStyle : Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 			clearOnEdit : true,
 		});
-		
+
 		var noteField = Titanium.UI.createTextField({
 			color : '#336699',
 			height : 55,
@@ -49,27 +48,46 @@
 			bottom : 130
 		});
 		saveButton.addEventListener('click', function() {
-				Ti.App.Properties.setString(latitudeField.value, noteField.value);
-				Ti.App.Properties.setString(longitudeField.value, noteField.value);
+			Ti.App.Properties.setString(latitudeField.value, noteField.value);
+			Ti.App.Properties.setString(longitudeField.value, noteField.value);
 		});
-		var recallButton = Ti.UI.createButton({
-			title : 'Recall note',
+		var recordButton = Ti.UI.createButton({
+			title : 'Record note',
 			height : 60,
-			width : '90%',
-			bottom : 70
+			width : '40%',
+			left : '10%',
+			bottom : 70,
 		});
-		recallButton.addEventListener('click', function() {
-			var latNote = Ti.App.Properties.getString(latitudeField.value, '-1');
-			var longNote = Ti.App.Properties.getString(longitudeField.value, '-2');
-			if(longNote === latNote){
-				noteField.setValue(Ti.App.Properties.getString(longitudeField.value, ''));
-			}
+
+		var playButton = Ti.UI.createButton({
+			title : 'Play note',
+			height : 60,
+			width : '40%',
+			right : '10%',
+			bottom : 70,
+		});
+
+		recordButton.addEventListener('click', function() {
+			Ti.App.fireEvent('recorder:recordNote', {
+				latitude : latitudeField.value,
+				longitude : longitudeField.value,
+				friend : ''
+			});
+		});
+
+		playButton.addEventListener('click', function() {
+			Ti.App.fireEvent('recorder:playNote', {
+				latitude : latitudeField.value,
+				longitude : longitudeField.value,
+				friend : ''
+			});
 		});
 		win.add(latitudeField);
 		win.add(noteField);
 		win.add(longitudeField);
 		win.add(saveButton);
-		win.add(recallButton);
+		win.add(playButton);
+		win.add(recordButton);
 		return win;
 	};
 })();
