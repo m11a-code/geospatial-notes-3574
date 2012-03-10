@@ -57,6 +57,7 @@
 			width : '40%',
 			left : '10%',
 			bottom : 70,
+			isRecording : false
 		});
 
 		var playButton = Ti.UI.createButton({
@@ -64,7 +65,7 @@
 			height : 60,
 			width : '40%',
 			right : '10%',
-			bottom : 70,
+			bottom : 70
 		});
 
 		recordButton.addEventListener('click', function() {
@@ -73,9 +74,12 @@
 				longitude : longitudeField.value,
 				friend : ''
 			});
+			this.isRecording = !this.isRecording;
+			this.title = (this.isRecording ? 'Record note' : 'Stop recording');
 		});
 
 		playButton.addEventListener('click', function() {
+			Ti.App.fireEvent('recorder:stopRecording');
 			Ti.App.fireEvent('recorder:playNote', {
 				latitude : latitudeField.value,
 				longitude : longitudeField.value,
