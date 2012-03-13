@@ -44,7 +44,6 @@
 				friendTable.appendRow(tvRow);
 			}
 		});
-		// Won't show up!?
 
 		// Fetch a list of friends using the Facebook API
 		Ti.App.addEventListener('app:getFriends', function() {
