@@ -94,6 +94,10 @@
 		return win;
 	};
 	
+	
+	
+	
+	
 	gn.ui.createSettingsWindow = function() {
 		var win = Ti.UI.createWindow({
 			title : 'settings_screen',
@@ -210,20 +214,65 @@
 
 	gn.ui.createInboxWindow = function() {
 		var win = Ti.UI.createWindow({
-			title : 'Inbox',
+			title : 'All Notes',
 			backgroundColor : 'white',
 			exitOnClose:false,
 			fullscreen:false
 		});
 
+		/*
 		var view = Titanium.UI.createView({
 			borderRadius : 10,
 			width : '95%',
 			height : '95%',
-			backgroundColor : 'black'
+			backgroundColor : 'white'
 		});
 
 		win.add(view);
+		*/
+		
+		// Get all notes. The mode parameter is ready to be changed, but the UI hasn't been fully implemented yet
+		var data = getNotes({
+			mode : 'all'
+		});
+		
+		var table = Ti.UI.createTableView();
+		win.add(table);
+		
+		
+		// Traverse the list of notes and add them row by row
+		while( data.isValidRow() )
+		{
+			var row = Ti.UI.createTableViewRow({
+				title : data.fieldByName('noteName') + '...' //should be noteName, I forgot to enter it in the only entry so it would show up as blank
+			});
+			
+			table.appendRow(row);
+			
+			data.next();
+		}
+		
+		
+		// Add optoin to create a dummy note
+		var addDummy = Ti.UI.createTableViewRow({
+			title : 'Add dummy note'
+		});
+		
+		addDummy.addEventListener( 'click', function() {
+			saveNote( {
+				noteName : 'Dummy note!' + Math.floor(Math.random()*1000),
+				noteContent : 'Dummy Note! Wooo',
+				noteLatitude : '1.000000',
+				noteLongitude : '1.0000',
+				noteDateCreated : Math.round((new Date()).getTime() / 1000 ), //unix timestamp
+				noteGroupID : 0 //Only shared with self
+				
+			});	
+			
+			alert('Dummy note was added. Load the notes list again to see');
+		});
+		
+		table.appendRow(addDummy);
 
 		return win;
 	};
