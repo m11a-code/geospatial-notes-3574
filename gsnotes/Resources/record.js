@@ -8,7 +8,7 @@
 		return baseURL + ourFriend + "/lat_" + ourLat + "_long_" + ourLong;
 	};
 
-	Ti.App.addEventListener('recorder:recordNote', function(e) {
+	/*Ti.App.addEventListener('recorder:recordNote', function(e) {
 		gn.ui.recordAudioNote(e.latitude, e.longitude, e.friend);
 	});
 	gn.ui.recordAudioNote = function(latitude, longitude, friend) {
@@ -42,5 +42,5 @@
 	Ti.App.addEventListener('recorder:playNote', function(e) {
 		var audioRecorder = require('com.codeboxed.audiorecorder');
 		audioRecorder.playAudio(buildFilePath(e.latitude, e.longitude, e.friend));
-	});
+	});*/
 })();

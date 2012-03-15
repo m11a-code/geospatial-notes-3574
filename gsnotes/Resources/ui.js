@@ -1,6 +1,6 @@
 (function() {
 	
-	gn.ui = {};
+	gn.ui = gn.ui || {};
 	
 	gn.ui.createWelcomeScreen = function() {
 		var win = Ti.UI.createWindow({

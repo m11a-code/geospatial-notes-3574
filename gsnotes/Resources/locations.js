@@ -69,22 +69,69 @@
 		});
 
 		recordButton.addEventListener('click', function() {
-			Ti.App.fireEvent('recorder:recordNote', {
-				latitude : latitudeField.value,
-				longitude : longitudeField.value,
-				friend : ''
+			alert('Broken, will fix next build cycle');
+			var countdown = 5;
+
+			// Create a notification
+			var n = Ti.UI.createNotification({
+				message : "Record attempted.  Try again next build cycle!"
 			});
-			this.isRecording = !this.isRecording;
-			this.title = (this.isRecording ? 'Record note' : 'Stop recording');
+			// Set the duration to either Ti.UI.NOTIFICATION_DURATION_LONG or NOTIFICATION_DURATION_SHORT
+			n.duration = Ti.UI.NOTIFICATION_DURATION_LONG;
+
+			// Setup the X & Y Offsets
+			n.offsetX = 100;
+			n.offsetY = 75;
+
+			// Make it a little bit interesting
+			var countdownSeconds = setInterval(function() {
+				countdown = countdown - 1;
+				if(countdown < 0) {
+					clearInterval(countdownSeconds);
+					n.show();
+				}
+			}, 1000);
+			/*Ti.App.fireEvent('recorder:recordNote', {
+			 latitude : latitudeField.value,
+			 longitude : longitudeField.value,
+			 friend : ''
+			 });
+			 this.isRecording = !this.isRecording;
+			 this.title = (this.isRecording ? 'Record note' : 'Stop recording');*/
 		});
 
 		playButton.addEventListener('click', function() {
-			Ti.App.fireEvent('recorder:stopRecording');
-			Ti.App.fireEvent('recorder:playNote', {
-				latitude : latitudeField.value,
-				longitude : longitudeField.value,
-				friend : ''
+			alert('Broken, will fix next build cycle');
+			var AppIntent = Ti.Android.createIntent({
+				flags : Ti.Android.FLAG_ACTIVITY_CLEAR_TOP | Ti.Android.FLAG_ACTIVITY_SINGLE_TOP,
+				className : 'org.appcelerator.titanium.TiActivity',
+				packageName : Ti.App.id
 			});
+			AppIntent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
+
+			var NotificationClickAction = Ti.Android.createPendingIntent({
+				activity : Ti.Android.currentActivity,
+				intent : AppIntent,
+				flags : Ti.Android.FLAG_UPDATE_CURRENT,
+				type : Ti.Android.PENDING_INTENT_FOR_ACTIVITY
+			});
+
+			var notification = Ti.Android.createNotification({
+				icon : 0x7f020000,
+				contentIntent : NotificationClickAction,
+				contentTitle : 'Notification',
+				contentText : "You tried to play a note.  Try again next build cycle!",
+				tickerText : "You tried to play a note.  Try again next build cycle!"
+			});
+
+			Ti.Android.NotificationManager.notify(1, notification);
+
+			/*Ti.App.fireEvent('recorder:stopRecording');
+			 Ti.App.fireEvent('recorder:playNote', {
+			 latitude : latitudeField.value,
+			 longitude : longitudeField.value,
+			 friend : ''
+			 });*/
 		});
 		win.add(latitudeField);
 		win.add(noteField);
