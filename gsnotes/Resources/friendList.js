@@ -69,9 +69,8 @@
 				alert('Not logged in');
 			}
 		});
-		// Opens a window to interacct with a specific friend
-		// The parameters here will probaby change to just a local ID
-		// This can be cleaned up a bit by separating out UI elements
+		
+		
 		//event params: firstName, lastName, friendID
 		Ti.App.addEventListener('app:openFriend', function(params) {
 			var firstName = params.firstName;
@@ -81,7 +80,7 @@
 			var friendWindow = Ti.UI.createWindow({
 				title : fullName
 			});
-
+			
 			var friendView = Ti.UI.createView({
 				borderRadius : 10,
 				width : '95%',
@@ -91,11 +90,51 @@
 			});
 
 			var image = Titanium.UI.createImageView({
-				url : "https://graph.facebook.com/" + friendID + "/picture"
+				url : "https://graph.facebook.com/" + friendID + "/picture",
+				height : '50px',
+				width : '50px',
+				top : 15,
+				left : 15
 			});
 
+			var sharedNotesButton = Ti.UI.createButton({
+				title : 'See notes shared with ' + firstName,
+				top : 60
+			});
+			
+			var createNotesButton = Ti.UI.createButton({
+				title : 'Create new shared note',
+				top : 95
+			})
+			
+			sharedNotesButton.addEventListener( 'click', function(){
+				
+			
+				 var win = Ti.UI.createWindow({
+					backgroundColor : 'white',
+					title : 'Notes shared with ' + firstName,
+					exitOnClose : false
+				})
+				
+				
+				win.open();
+				
+			});
+			
+			createNotesButton.addEventListener( 'click', function(){
+				var win = Ti.UI.createWindow({
+					backgroundColor : 'white',
+					title : 'Create new note to share with ' + firstName,
+					exitOnClose : false
+				})
+				win.open();
+				
+				
+			});
+			
 			friendView.add(image);
-
+			friendView.add( sharedNotesButton);
+			friendView.add(createNotesButton);
 			friendWindow.add(friendView);
 
 			friendView.addEventListener('click', function() {
