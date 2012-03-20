@@ -30,15 +30,18 @@
 					height : 'auto',
 					backgroundColor : bgColor,
 					title : fullname,
-					className : 'foo' //it doesn't matter what this is, it just needs to be a string and the same for all rows that are the same
+					className : 'foo', //it doesn't matter what this is, it just needs to be a string and the same for all rows that are the same
+					firstName : friend.first_name,
+					lastName : friend.last_name,
+					friendID : friend.id
 				});
 
 				// Add a listener for that row
 				tvRow.addEventListener('click', function() {
 					Ti.App.fireEvent('app:openFriend', {
-						firstName : friend.first_name,
-						lastName : friend.last_name,
-						friendID : friend.id
+						firstName : this.firstName,
+						lastName : this.lastName,
+						friendID : this.friendID
 					});
 				});
 				friendTable.appendRow(tvRow);
@@ -108,8 +111,9 @@
 			})
 			
 			sharedNotesButton.addEventListener( 'click', function(){
-				
+				gn.ui.createInboxWindow().open();
 			
+			/*
 				 var win = Ti.UI.createWindow({
 					backgroundColor : 'white',
 					title : 'Notes shared with ' + firstName,
@@ -118,6 +122,7 @@
 				
 				
 				win.open();
+				*/
 				
 			});
 			
@@ -140,7 +145,9 @@
 			friendView.addEventListener('click', function() {
 				friendWindow.close();
 			});
-
+			
+			
+			
 			friendWindow.open();
 		});
 		return friendWindow;
