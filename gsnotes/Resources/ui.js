@@ -7,7 +7,8 @@
 			title : 'welcome_screen',
 			backgroundColor : 'black',
 			exitOnClose:true,
-			fullscreen:false
+			fullscreen:false,
+			touchEnabled: false
 		});
 		
 		var activity = Ti.Android.currentActivity;
@@ -28,7 +29,7 @@
 		}));
 
 		var bInbox = Ti.UI.createButton({
-			title : 'inbox',
+			title : 'Inbox',
 			height : 60,
 			width : '30%',
 			bottom : 10,
