@@ -33,7 +33,7 @@
 
 		Ti.App.addEventListener('app:geoLocationUpdate', function(longLat) {
 			latitudeField.value = longLat.lat;
-			longitudeField.value = longLat.long;
+			longitudeField.value = longLat.lon;
 		});
 
 		var noteField = Titanium.UI.createTextField({
@@ -57,7 +57,7 @@
 			Ti.App.Properties.setString(longitudeField.value, noteField.value);
 			setTimeout(function() {
 				var lat = latitudeField.value;
-				var long = longitudeField.value;
+				var lon = longitudeField.value;
 				gn.db.saveNote({
 					noteName : noteField.value + Math.floor(Math.random() * 1000),
 					noteContent : noteField.value,
@@ -72,11 +72,11 @@
 					var newLong = longitudeField.value
 					if(newlat / lat <= 0.1 || (newlat / lat > 1 && newlat / lat <= 1.1)) {
 						clearInterval(this);
-						if(newlong / long <= 0.1 || (newLong / long > 1 && newlong / long <= 1.1)) {
+						if(newlong / lon <= 0.1 || (newLong / lon > 1 && newlong / lon <= 1.1)) {
 							var data = getNotes({
 								mode : 'nearby',
 								params : {
-									longitude : long,
+									longitude : lon,
 									latitude : lat
 								}
 							});
