@@ -11,7 +11,7 @@
 		});
 		
 		win.addEventListener('android:back',function(){
-			win.close();
+			this.close();
 		});
 		//Create two global variables to store latitude and longitude
 		//Since updating the GPS is asynchronous, to use a button to display the position
@@ -119,7 +119,7 @@
 		if(Titanium.Geolocation.locationServicesEnabled === false) {
 			Titanium.UI.createAlertDialog({
 				title : 'Geolocation',
-				message : 'Your device has geo turned off - turn it on.'
+				message : 'Your device has geo turned off - turn it on please.'
 			}).show();
 		} else {
 			if(Titanium.Platform.name != 'android') {
@@ -288,7 +288,43 @@
 		//create the window
 		var win1 = Titanium.UI.createWindow({  
 		    title:'Exercise Tracker',
-		    backgroundColor: '#000'
+		    backgroundColor: '#000',
+		    exitOnClose:false,
+			fullscreen:false
+		});
+		// win1.addEventListener('android:back',function(){
+			// this.close();
+		// });
+		
+		//set the distance filter
+		Ti.Geolocation.distanceFilter = 10;
+		
+		//This is required by Apple so it can inform the user of why you are accessing their location data
+		Ti.Geolocation.purpose = "To obtain current user location for use of finding nearby notes to current user location.";
+		Ti.Geolocation.getCurrentPosition(function(e) {
+			if (e.error) {
+				//if mapping location doesn't work, show an alert
+				//if(Titanium.Geolocation.locationServicesEnabled === false) {
+				Titanium.UI.createAlertDialog({
+				title : 'Geolocation',
+				message : 'Your device has geo turned off - turn it on please.',
+				buttonNames: ['OK']
+				}).show();
+				//}
+				//alert('Sorry, but it seems that geolocation is not available on your device right now!');
+				return;
+			}
+			//get properties from Ti.Geolocation
+			var longitude = e.coords.longitude;
+			var latitude = e.coords.latitude;
+			var altitude = e.coords.altitude;
+			var heading = e.coords.heading;
+			var accuracy = e.coords.accuracy;
+			var speed = e.coords.speed;
+			var timestamp = e.coords.timestamp;
+			var altitudeAccuracy = e.coords.altitudeAccuracy;
+			//Now, apply the longitude and latitude properties to our mapview
+			mapview.region = {latitude: latitude, longitude: longitude, latitudeDelta:0.02, longitudeDelta:0.02};
 		});
 		
 		//create our mapview
@@ -484,30 +520,6 @@
 		win1.add(mapViewSearchButton);
 		win1.add(mapInfoTopView);
 		win1.add(mapSearchTopView);
-		
-		//set the distance filter
-		Ti.Geolocation.distanceFilter = 10;
-		
-		//This is required by Apple so it can inform the user of why you are accessing their location data
-		Ti.Geolocation.purpose = "To obtain current user location for use of finding nearby notes to current user location.";
-		Ti.Geolocation.getCurrentPosition(function(e) {
-			if (e.error) {
-				//if mapping location doesn't work, show an alert
-				alert('Sorry, but it seems that geolocation is not available on your device right now!');
-				return;
-			}
-			//get properties from Ti.Geolocation
-			var longitude = e.coords.longitude;
-			var latitude = e.coords.latitude;
-			var altitude = e.coords.altitude;
-			var heading = e.coords.heading;
-			var accuracy = e.coords.accuracy;
-			var speed = e.coords.speed;
-			var timestamp = e.coords.timestamp;
-			var altitudeAccuracy = e.coords.altitudeAccuracy;
-			//Now, apply the longitude and latitude properties to our mapview
-			mapview.region = {latitude: latitude, longitude: longitude, latitudeDelta:0.02, longitudeDelta:0.02};
-		});
 		
 		//finally, open the window
 		//win1.open();
