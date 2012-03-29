@@ -233,7 +233,7 @@
 		*/
 		
 		// Get all notes. The mode parameter is ready to be changed, but the UI hasn't been fully implemented yet
-		var data = getNotes({
+		var data = gn.db.getNotes({
 			mode : 'all'
 		});
 		
@@ -260,7 +260,7 @@
 		});
 		
 		addDummy.addEventListener( 'click', function() {
-			saveNote( {
+			gn.db.saveNote( {
 				noteName : 'Dummy note!' + Math.floor(Math.random()*1000),
 				noteContent : 'Dummy Note! Wooo',
 				noteLatitude : '1.000000',
