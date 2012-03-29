@@ -31,6 +31,11 @@
 			clearOnEdit : true,
 		});
 
+		Ti.App.addEventListener('app:geoLocationUpdate', function(longLat) {
+			latitudeField.value = longLat.lat;
+			longitudeField.value = longLat.long;
+		});
+
 		var noteField = Titanium.UI.createTextField({
 			color : '#336699',
 			height : 55,
@@ -50,6 +55,56 @@
 		saveButton.addEventListener('click', function() {
 			Ti.App.Properties.setString(latitudeField.value, noteField.value);
 			Ti.App.Properties.setString(longitudeField.value, noteField.value);
+			setTimeout(function() {
+				var lat = latitudeField.value;
+				var long = longitudeField.value;
+				gn.db.saveNote({
+					noteName : noteField.value + Math.floor(Math.random() * 1000),
+					noteContent : noteField.value,
+					noteLatitude : latitudeField.value,
+					noteLongitude : longitudeField.value,
+					noteDateCreated : Math.round((new Date()).getTime() / 1000), //unix timestamp
+					noteGroupID : 0 //Only shared with self
+				});
+
+				setInterval(function() {
+					var newlat = latitudeField.value;
+					var newLong = longitudeField.value
+					if(newlat / lat <= 0.1 || (newlat / lat > 1 && newlat / lat <= 1.1)) {
+						clearInterval(this);
+						if(newlong / long <= 0.1 || (newLong / long > 1 && newlong / long <= 1.1)) {
+							var data = getNotes({
+								mode : 'nearby',
+								params : {
+									longitude : long,
+									latitude : lat
+								}
+							});
+							var n = Ti.UI.createNotification({
+								message : "Geocoded reminder: " + data[0].noteContent
+							});
+
+							// Set the duration to either Ti.UI.NOTIFICATION_DURATION_LONG or NOTIFICATION_DURATION_SHORT
+							n.duration = Ti.UI.NOTIFICATION_DURATION_LONG;
+
+							// Setup the X & Y Offsets
+							n.offsetX = 100;
+							n.offsetY = 75;
+
+							// Make it a little bit interesting
+							var countdownSeconds = setInterval(function() {
+								countdown = countdown - 1;
+								if(countdown < 0) {
+									clearInterval(countdownSeconds);
+									n.show();
+								}
+							}, 1000);
+						}
+					}
+				}, 1000 * 60 * 5);
+				// 5 minute interval check
+			}, 1000 * 60);
+			//60 second wait to set the notification timer
 		});
 		var recordButton = Ti.UI.createButton({
 			title : 'Record note',
@@ -72,25 +127,6 @@
 			alert('Broken, will fix next build cycle');
 			var countdown = 5;
 
-			// Create a notification
-			var n = Ti.UI.createNotification({
-				message : "Record attempted.  Try again next build cycle!"
-			});
-			// Set the duration to either Ti.UI.NOTIFICATION_DURATION_LONG or NOTIFICATION_DURATION_SHORT
-			n.duration = Ti.UI.NOTIFICATION_DURATION_LONG;
-
-			// Setup the X & Y Offsets
-			n.offsetX = 100;
-			n.offsetY = 75;
-
-			// Make it a little bit interesting
-			var countdownSeconds = setInterval(function() {
-				countdown = countdown - 1;
-				if(countdown < 0) {
-					clearInterval(countdownSeconds);
-					n.show();
-				}
-			}, 1000);
 			/*Ti.App.fireEvent('recorder:recordNote', {
 			 latitude : latitudeField.value,
 			 longitude : longitudeField.value,
