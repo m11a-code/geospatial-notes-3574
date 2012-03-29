@@ -1,6 +1,9 @@
 (function() {
 	gn.ui = gn.ui || {};
 	gn.ui.friendList = {};
+	
+	gn.loadedFriends = false;
+	
 	gn.ui.createFriendsWindow = function() {
 
 		var friendWindow = Ti.UI.createWindow({
@@ -9,31 +12,74 @@
 			fullscreen : false
 		});
 
+
+		var search = Titanium.UI.createTextField({
+			left : 0,
+			top : 0,
+		    height : '10%',
+		    width : '90%',
+		    hint : 'Search for a friend...'
+		});
+		
+		var searchBtn = Ti.UI.createButton({
+			right : 0,
+			top : 0,
+			width : '10%',
+			height : '10%'
+		});
+		
 		friendWindow.addEventListener('open', function() {
 			Ti.App.fireEvent('app:getFriends');
 		});
-		var friendTable = Ti.UI.createTableView();
+		
+		
+		var friendTable = Ti.UI.createTableView({
+			top :'10%'
+		});
+		
+
 		friendWindow.add(friendTable);
+		
+		friendWindow.add(search);
+		friendWindow.add(searchBtn);
 
+		searchBtn.addEventListener('click',function(){
+				
+			Ti.App.fireEvent('app:showFriends', {
+				filter_mode : 'fullName',
+				filter : search.value
+			});
+		});
+		
+		
 		Ti.App.addEventListener('app:showFriends', function(params) {
-			var data = params.data;
-			var friendCount = data.length;
-			for(var c = 0; c < friendCount; c++) {
-				var friend = data[c];
-				var fullname = friend.first_name + " " + friend.last_name;
 
+			// Default data
+			var data = gn.db.getFBFriends({
+				filter_mode : params.filter_mode,
+				filter : params.filter
+			});
+			var rowArray	= new Array();
+					
+			while(data.isValidRow() )
+			{	
+				var first_name	= data.fieldByName('fbFirstName');
+				var last_name	= data.fieldByName('fbLastName');
+				var full_name	= data.fieldByName('fbFullName');
+				var id			= data.fieldByName('fbID');
+				
 				// Alternating background colors
-				var bgColor = (c % 2 === 1) ? '#EEE' : '#FFF';
+				var bgColor = '#FFFFFF'; //(c % 2 === 1) ? '#EEE' : '#FFF';
 
 				// Create a row for this user
 				var tvRow = Ti.UI.createTableViewRow({
 					height : 'auto',
 					backgroundColor : bgColor,
-					title : fullname,
-					className : 'foo', //it doesn't matter what this is, it just needs to be a string and the same for all rows that are the same
-					firstName : friend.first_name,
-					lastName : friend.last_name,
-					friendID : friend.id
+					title : full_name,
+					className : 'fbfriends',
+					firstName : first_name,
+					lastName : last_name,
+					friendID : id
 				});
 
 				// Add a listener for that row
@@ -44,32 +90,65 @@
 						friendID : this.friendID
 					});
 				});
-				friendTable.appendRow(tvRow);
+				
+				
+				rowArray.push(tvRow);
+				data.next();
 			}
+			
+			friendTable.setData(rowArray);
 		});
+
 
 		// Fetch a list of friends using the Facebook API
 		Ti.App.addEventListener('app:getFriends', function() {
-			if(Ti.Facebook.getLoggedIn()) {
-				// requestWithGraphPath vs Titanium.Facebook.Execute
-				// Not really sure if there's a big difference, but this one works
-				Titanium.Facebook.requestWithGraphPath('me/friends', {
-					fields : 'first_name,last_name,id'
-				}, 'GET', function(e) {
-					if(e.success) {
-						var d = JSON.parse(e.result);
-						Ti.App.fireEvent('app:showFriends', {
-							data : d.data
-						});
-					} else if(e.error) {
-						alert(e.error + ' please ensure you are logged in correctly from the main screen.');
-						setTimeout(function() {
-							friendWindow.close();
-						}, 2000);
-					}
+			
+			if( !gn.loadedFriends )
+			{
+				if(Ti.Facebook.getLoggedIn()) {
+					// requestWithGraphPath vs Titanium.Facebook.Execute
+					// Not really sure if there's a big difference, but this one works
+					Titanium.Facebook.requestWithGraphPath('me/friends', {
+						fields : 'first_name,last_name,id'
+					}, 'GET', function(e) {
+						if(e.success) {
+							var d = JSON.parse(e.result);
+							
+							// Clear out old db
+							gn.db.clearFBFriends();
+							
+							// Go through the result set, adding friends one by one
+							
+							var friendCount = d.data.length;
+							for(var c = 0; c < friendCount; c++) {
+								var friend = d.data[c];
+								gn.db.addFBFriend(friend.id, friend.first_name, friend.last_name);
+	
+							}
+							
+							
+							Ti.App.fireEvent('app:showFriends', {
+								filter_mode : '',
+								filter: ''
+							});
+							gn.loadedFriends = true;
+						} else if(e.error) {
+							alert(e.error + ' please ensure you are logged in correctly from the main screen.');
+							setTimeout(function() {
+								friendWindow.close();
+							}, 2000);
+						}
+					});
+				} else {
+					alert('Not logged in');
+				}
+			}
+			else
+			{
+				Ti.App.fireEvent('app:showFriends', {
+					filter_mode : '',
+					filter : ''
 				});
-			} else {
-				alert('Not logged in');
 			}
 		});
 		
@@ -94,20 +173,21 @@
 
 			var image = Titanium.UI.createImageView({
 				url : "https://graph.facebook.com/" + friendID + "/picture",
-				height : '50px',
-				width : '50px',
-				top : 15,
-				left : 15
+				height : '15%',
+				width : '15%',
+				top : 0,
+				left : 0
 			});
 
 			var sharedNotesButton = Ti.UI.createButton({
 				title : 'See notes shared with ' + firstName,
-				top : 60
+				top : '15%',
+				height : '10%'
 			});
 			
 			var createNotesButton = Ti.UI.createButton({
 				title : 'Create new shared note',
-				top : 95
+				top : '25%'
 			})
 			
 			sharedNotesButton.addEventListener( 'click', function(){
