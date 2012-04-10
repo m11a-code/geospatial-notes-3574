@@ -68,11 +68,11 @@
 			
 			case 'fullName':
 				// Default is by full name
-				query = 'SELECT * FROM facebookFriends WHERE fbFullName LIKE "%' + params.filter + '%" ORDER BY fbFullName ASC';
+				query = 'SELECT * FROM facebookFriends WHERE fbFullName LIKE "%' + params.filter + '%" ORDER BY fbFullName ASC LIMIT ' + params.start + ',' + params.limit;
 			break;
 			
 			default:
-				query = 'SELECT * FROM facebookFriends ORDER BY fbFullName ASC';
+				query = 'SELECT * FROM facebookFriends ORDER BY fbFullName ASC LIMIT ' + params.start + ',' + params.limit;
 			
 			
 		}
