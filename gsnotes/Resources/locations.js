@@ -1,6 +1,22 @@
 (function() {
 	gn.ui = gn.ui || {};
 	gn.ui.createLocationWindow = function() {
+		Ti.App.addEventListener('positionUpdate', function(e) {
+			// accuracy is the error margin for the user's location
+			latitudeField.value = e.latitude;
+			longitudeField.value = e.longitude;
+			var accuracy = e.accuracy;
+			// timestamp is when the user's location was last updated
+			var timestamp = e.timestamp;
+			// latitude and longitude establish a point on the map
+			var latitude = e.latitude;
+			var longitude = e.longitude;
+			// altitude establishes how high the user is (there is a direct correlation with brownie intake)
+			var altitude = e.altitude;
+			// how fast is the user traveling?
+			var speed = e.speed;
+		});
+
 		var win = Ti.UI.createWindow({
 			title : 'inbox',
 			backgroundColor : 'blue',
@@ -11,6 +27,7 @@
 		win.addEventListener('android:back', function() {
 			win.close();
 		});
+
 		var latitudeField = Titanium.UI.createTextField({
 			color : '#336699',
 			height : 55,
@@ -52,6 +69,7 @@
 			width : '90%',
 			bottom : 130
 		});
+
 		saveButton.addEventListener('click', function() {
 			Ti.App.Properties.setString(latitudeField.value, noteField.value);
 			Ti.App.Properties.setString(longitudeField.value, noteField.value);
@@ -69,112 +87,72 @@
 
 				setInterval(function() {
 					var newlat = latitudeField.value;
-					var newLong = longitudeField.value
-					if(newlat / lat <= 0.1 || (newlat / lat > 1 && newlat / lat <= 1.1)) {
+					var newLong = longitudeField.value;
+					if(newlong / (lon * 1) <= 0.1 || (newLong / (lon * 1) > 1 && newlong / (lon * 1) <= 1.1)) {
 						clearInterval(this);
-						if(newlong / lon <= 0.1 || (newLong / lon > 1 && newlong / lon <= 1.1)) {
-							var data = getNotes({
-								mode : 'nearby',
-								params : {
-									longitude : lon,
-									latitude : lat
-								}
-							});
-							var n = Ti.UI.createNotification({
-								message : "Geocoded reminder: " + data[0].noteContent
-							});
-
-							// Set the duration to either Ti.UI.NOTIFICATION_DURATION_LONG or NOTIFICATION_DURATION_SHORT
-							n.duration = Ti.UI.NOTIFICATION_DURATION_LONG;
-
-							// Setup the X & Y Offsets
-							n.offsetX = 100;
-							n.offsetY = 75;
-
-							// Make it a little bit interesting
-							var countdownSeconds = setInterval(function() {
-								countdown = countdown - 1;
-								if(countdown < 0) {
-									clearInterval(countdownSeconds);
-									n.show();
-								}
-							}, 1000);
+						var data = getNotes({
+							mode : 'nearby',
+							params : {
+								longitude : lon,
+								latitude : lat
+							}
+						});
+						var msg = 'Something went wrong -- no notes found, but there should have been one?';
+						if(data[0] && data[0].noteContent) {
+							msg = data[0].noteContent;
 						}
+						var n = Ti.UI.createNotification({
+							message : "Geocoded reminder: " + msg
+						});
+
+						// Set the duration to either Ti.UI.NOTIFICATION_DURATION_LONG or NOTIFICATION_DURATION_SHORT
+						n.duration = Ti.UI.NOTIFICATION_DURATION_LONG;
+
+						// Setup the X & Y Offsets
+						n.offsetX = 100;
+						n.offsetY = 75;
+
+						// Make it a little bit interesting
+						var countdownSeconds = setInterval(function() {
+							countdown = countdown - 1;
+							if(countdown < 0) {
+								clearInterval(countdownSeconds);
+								n.show();
+							}
+						}, 1000);
+					} else {
+						clearInterval(this);
+						var msg = noteField.value;
+						var n = Ti.UI.createNotification({
+							message : "Geocoded reminder: " + msg
+						});
+
+						// Set the duration to either Ti.UI.NOTIFICATION_DURATION_LONG or NOTIFICATION_DURATION_SHORT
+						n.duration = Ti.UI.NOTIFICATION_DURATION_LONG;
+
+						// Setup the X & Y Offsets
+						n.offsetX = 100;
+						n.offsetY = 75;
+
+						// Make it a little bit interesting
+						var countdownSeconds = setInterval(function() {
+							countdown = countdown - 1;
+							if(countdown < 0) {
+								clearInterval(countdownSeconds);
+								n.show();
+							}
+						}, 1000);
 					}
-				}, 1000 * 60 * 5);
-				// 5 minute interval check
-			}, 1000 * 60);
-			//60 second wait to set the notification timer
-		});
-		var recordButton = Ti.UI.createButton({
-			title : 'Record note',
-			height : 60,
-			width : '40%',
-			left : '10%',
-			bottom : 70,
-			isRecording : false
+				}, 1000 * 30);
+				// 30 second check time
+			}, 1000 * 30);
+			//30 second wait to set the notification timer
 		});
 
-		var playButton = Ti.UI.createButton({
-			title : 'Play note',
-			height : 60,
-			width : '40%',
-			right : '10%',
-			bottom : 70
-		});
-
-		recordButton.addEventListener('click', function() {
-			alert('Broken, will fix next build cycle');
-			var countdown = 5;
-
-			/*Ti.App.fireEvent('recorder:recordNote', {
-			 latitude : latitudeField.value,
-			 longitude : longitudeField.value,
-			 friend : ''
-			 });
-			 this.isRecording = !this.isRecording;
-			 this.title = (this.isRecording ? 'Record note' : 'Stop recording');*/
-		});
-
-		playButton.addEventListener('click', function() {
-			alert('Broken, will fix next build cycle');
-			var AppIntent = Ti.Android.createIntent({
-				flags : Ti.Android.FLAG_ACTIVITY_CLEAR_TOP | Ti.Android.FLAG_ACTIVITY_SINGLE_TOP,
-				className : 'org.appcelerator.titanium.TiActivity',
-				packageName : Ti.App.id
-			});
-			AppIntent.addCategory(Ti.Android.CATEGORY_LAUNCHER);
-
-			var NotificationClickAction = Ti.Android.createPendingIntent({
-				activity : Ti.Android.currentActivity,
-				intent : AppIntent,
-				flags : Ti.Android.FLAG_UPDATE_CURRENT,
-				type : Ti.Android.PENDING_INTENT_FOR_ACTIVITY
-			});
-
-			var notification = Ti.Android.createNotification({
-				icon : 0x7f020000,
-				contentIntent : NotificationClickAction,
-				contentTitle : 'Notification',
-				contentText : "You tried to play a note.  Try again next build cycle!",
-				tickerText : "You tried to play a note.  Try again next build cycle!"
-			});
-
-			Ti.Android.NotificationManager.notify(1, notification);
-
-			/*Ti.App.fireEvent('recorder:stopRecording');
-			 Ti.App.fireEvent('recorder:playNote', {
-			 latitude : latitudeField.value,
-			 longitude : longitudeField.value,
-			 friend : ''
-			 });*/
-		});
 		win.add(latitudeField);
-		win.add(noteField);
 		win.add(longitudeField);
+		win.add(noteField);
 		win.add(saveButton);
-		win.add(playButton);
-		win.add(recordButton);
 		return win;
 	};
 })();

@@ -92,6 +92,19 @@
 		win.add(bOptions);
 		//win.add(view);
 
+		var bGPS = Ti.UI.createButton({
+			title : 'GPS',
+			height : 60,
+			width : '30%',
+			bottom : 70,
+			right : 10
+		});
+		bGPS.addEventListener('click', function() {
+			var winGPS = gn.ui.createGPSWindow();
+			winGPS.open();
+		});
+		win.add(bGPS);
+
 		return win;
 	};
 	
@@ -221,17 +234,6 @@
 			fullscreen:false
 		});
 
-		/*
-		var view = Titanium.UI.createView({
-			borderRadius : 10,
-			width : '95%',
-			height : '95%',
-			backgroundColor : 'white'
-		});
-
-		win.add(view);
-		*/
-		
 		// Get all notes. The mode parameter is ready to be changed, but the UI hasn't been fully implemented yet
 		var data = gn.db.getNotes({
 			mode : 'all'
