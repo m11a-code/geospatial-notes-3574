@@ -5,9 +5,11 @@ Ti.include('friendList.js', 'record.js', 'database.js', 'locations.js', 'geoloca
 
 Titanium.Facebook.appid = '166092423474222';
 Titanium.Facebook.permissions = ['read_stream', 'manage_pages'];
+
+
 Titanium.Facebook.addEventListener('login', function(e) {
 	if(e.success) {
-		alert('Logged in');
+		//alert('Logged in');
 	}
 });
 

@@ -5,7 +5,20 @@
 	gn.loadedFriends = false;
 	
 	gn.ui.createFriendsWindow = function() {
-
+		
+		var updating = false;
+		var loadingRow = Ti.UI.createTableViewRow({
+			title : "Loading...",
+			className : 'fbfriends'
+			
+		});
+		
+		var last_filter_mode;
+		var last_filter;
+		
+		var lastRow = 20;
+		
+		
 		var friendWindow = Ti.UI.createWindow({
 			backgroundColor : '#FFF',
 			exitOnClose : false,
@@ -37,18 +50,36 @@
 			top :'10%'
 		});
 		
+		// From kitchensink's dynamic scrolling example
+		
+		
+		friendTable.addEventListener('scrollEnd', function(e){
+			// going down is the only time we dynamically load,
+			// going up we can safely ignore -- note here that
+			// the values will be negative so we do the opposite
+			
+		
+			if (!updating)
+			{
+				Ti.App.fireEvent('app:getNextPageFriendsBegin');
+			}
 
+		});
+		
+		
+		
 		friendWindow.add(friendTable);
 		
 		friendWindow.add(search);
 		friendWindow.add(searchBtn);
 
 		searchBtn.addEventListener('click',function(){
-				
 			Ti.App.fireEvent('app:showFriends', {
 				filter_mode : 'fullName',
 				filter : search.value
 			});
+			
+			lastRow = 20;
 		});
 		
 		
@@ -57,8 +88,14 @@
 			// Default data
 			var data = gn.db.getFBFriends({
 				filter_mode : params.filter_mode,
-				filter : params.filter
+				filter : params.filter,
+				start : 0,
+				limit : 20
 			});
+			lastRow = 20;
+			last_filter_mode = params.filter_mode;
+			last_filter = params.filter;
+			
 			var rowArray	= new Array();
 					
 			while(data.isValidRow() )
@@ -74,6 +111,7 @@
 				// Create a row for this user
 				var tvRow = Ti.UI.createTableViewRow({
 					height : 'auto',
+					color : 'black',
 					backgroundColor : bgColor,
 					title : full_name,
 					className : 'fbfriends',
@@ -99,7 +137,85 @@
 			friendTable.setData(rowArray);
 		});
 
+		Ti.App.addEventListener('app:getNextPageFriendsBegin', function() {
+			updating = true;
+		
+			friendTable.appendRow(loadingRow);
+		
+			// just mock out the reload
+			setTimeout(function(){
+				Ti.App.fireEvent('app:getNextPageFriendsEnd');
+				
+			},2000);
+			
+			
+		});
+		
+		Ti.App.addEventListener('app:getNextPageFriendsEnd', function() {
+			updating = false;
+	
+			friendTable.deleteRow(lastRow);
+		
+			
+			// Default data
+			var data = gn.db.getFBFriends({
+				filter_mode : last_filter_mode,
+				filter : last_filter,
+				start : lastRow,
+				limit : 20
+			});
+			
+								
+			while(data.isValidRow() )
+			{	
+				var first_name	= data.fieldByName('fbFirstName');
+				var last_name	= data.fieldByName('fbLastName');
+				var full_name	= data.fieldByName('fbFullName');
+				var id			= data.fieldByName('fbID');
+				
+				// Alternating background colors
+				var bgColor = '#FFFFFF'; //(c % 2 === 1) ? '#EEE' : '#FFF';
 
+				// Create a row for this user
+				var tvRow = Ti.UI.createTableViewRow({
+					height : 'auto',
+					color : 'black',
+					backgroundColor : bgColor,
+					title : full_name,
+					className : 'fbfriends',
+					firstName : first_name,
+					lastName : last_name,
+					friendID : id
+				});
+
+				// Add a listener for that row
+				tvRow.addEventListener('click', function() {
+					Ti.App.fireEvent('app:openFriend', {
+						firstName : this.firstName,
+						lastName : this.lastName,
+						friendID : this.friendID
+					});
+				});
+				
+				friendTable.appendRow(tvRow);
+				
+				
+				//rowArray.push(tvRow);
+				data.next();
+			}
+			
+			lastRow += 20;
+		
+			// just scroll down a bit to the new rows to bring them into view
+			friendTable.scrollToIndex(lastRow-21,{
+				animated : true
+			});
+		
+			
+			
+		});
+		
+		
 		// Fetch a list of friends using the Facebook API
 		Ti.App.addEventListener('app:getFriends', function() {
 			
@@ -129,7 +245,8 @@
 							
 							Ti.App.fireEvent('app:showFriends', {
 								filter_mode : '',
-								filter: ''
+								filter : '',
+								start : 0
 							});
 							gn.loadedFriends = true;
 						} else if(e.error) {
@@ -147,7 +264,8 @@
 			{
 				Ti.App.fireEvent('app:showFriends', {
 					filter_mode : '',
-					filter : ''
+					filter : '',
+					start : 0
 				});
 			}
 		});
