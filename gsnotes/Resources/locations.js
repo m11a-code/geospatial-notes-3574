@@ -2,6 +2,7 @@
 	gn.ui = gn.ui || {};
 	gn.ui.createLocationWindow = function() {
 		Ti.App.addEventListener('positionUpdate', function(e) {
+			saveButton.title = "Save location (enabled)";
 			// accuracy is the error margin for the user's location
 			latitudeField.value = e.latitude;
 			longitudeField.value = e.longitude;
@@ -148,6 +149,7 @@
 			}, 1000 * 30);
 			//30 second wait to set the notification timer
 		});
+		
 
 		win.add(latitudeField);
 		win.add(longitudeField);
