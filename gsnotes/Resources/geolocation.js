@@ -287,14 +287,24 @@
 		
 		//create the window
 		var win1 = Titanium.UI.createWindow({  
-		    title:'Exercise Tracker',
+		    title:'MapView',
 		    backgroundColor: '#000',
 		    exitOnClose:false,
 			fullscreen:false
 		});
-		// win1.addEventListener('android:back',function(){
-			// this.close();
-		// });
+		win1.addEventListener('android:back', function() {
+			win1.close();
+		});
+		
+		//create our mapview
+		var mapview = Titanium.Map.createView({
+			height: '100%',
+			mapType: Titanium.Map.STANDARD_TYPE,
+			region:{latitude: 51.50015, longitude:-0.12623, latitudeDelta:0.02, longitudeDelta:0.02},
+			animate: true,
+			regionFit: true,
+			userLocation: true
+		});
 		
 		//set the distance filter
 		Ti.Geolocation.distanceFilter = 10;
@@ -312,7 +322,7 @@
 				}).show();
 				//}
 				//alert('Sorry, but it seems that geolocation is not available on your device right now!');
-				return;
+				//return;
 			}
 			//get properties from Ti.Geolocation
 			var longitude = e.coords.longitude;
@@ -325,16 +335,7 @@
 			var altitudeAccuracy = e.coords.altitudeAccuracy;
 			//Now, apply the longitude and latitude properties to our mapview
 			mapview.region = {latitude: latitude, longitude: longitude, latitudeDelta:0.02, longitudeDelta:0.02};
-		});
-		
-		//create our mapview
-		var mapview = Titanium.Map.createView({
-			height: '100%',
-			mapType: Titanium.Map.STANDARD_TYPE,
-			region:{latitude: 51.50015, longitude:-0.12623, latitudeDelta:0.02, longitudeDelta:0.02},
-			animate: true,
-			regionFit: true,
-			userLocation: true
+			mapview.setLocation(mapview.region);
 		});
 		
 		//will eventually only have this open when something is selected on the map.
@@ -416,8 +417,8 @@
 					Ti.API.info('Searched location co-ordinates are: ' + e.latitude + ' lat, ' + e.longitude + ' lon');
 					//add an annotation to the mapview for one's current location
 					//Also, the id # is what will allow us to tell which pin was tapped when we get to that point
-					var currentLocationAnnotation = Titanium.Map.createAnnotation({
-						latitude: e.latitude, longitude: e.longitude, title: 'Current Location', subtitle: noteSearchLocationTxtField.value, animate: true, id: 1, pincolor: Titanium.Map.ANNOTATION_GREEN
+					var newLocationAnnotation = Titanium.Map.createAnnotation({
+						latitude: e.latitude, longitude: e.longitude, title: 'Searched Location', subtitle: noteSearchLocationTxtField.value, animate: true, id: 1, pincolor: Titanium.Map.ANNOTATION_GREEN
 					});
 					//add an image to the left of the annotation
 					var leftAnnotationImage = Titanium.UI.createImageView({
@@ -425,29 +426,30 @@
 						width: 75,
 						height: 75
 					});
-					currentLocationAnnotation.leftView = leftAnnotationImage;
+					newLocationAnnotation.leftView = leftAnnotationImage;
 					//And add the annontation pin to the mapview
-					mapview.addAnnotation(currentLocationAnnotation);
-					
+					mapview.addAnnotation(newLocationAnnotation);
+					mapview.setLocation(mapview.region);
 					//move current view to annotation location
-					Ti.Geolocation.getCurrentPosition(function(e) {
-						if (e.error) {
-							//if mapping location doesn't work, show an alert
-							alert('Sorry, but it seems that geolocation is not available on your device right now!');
-							return;
-						}
-						//get properties from Ti.Geolocation
-						var longitude = e.coords.longitude;
-						var latitude = e.coords.latitude;
-						var altitude = e.coords.altitude;
-						var heading = e.coords.heading;
-						var accuracy = e.coords.accuracy;
-						var speed = e.coords.speed;
-						var timestamp = e.coords.timestamp;
-						var altitudeAccuracy = e.coords.altitudeAccuracy;
-						//Now, apply the longitude and latitude properties to our mapview
-						mapview.region = {latitude: latitude, longitude: longitude, latitudeDelta:0.02, longitudeDelta:0.02};
-					});
+					// Ti.Geolocation.getNewPosition(function(e) {
+						// if (e.error) {
+							// //if mapping location doesn't work, show an alert
+							// alert('Sorry, but it seems that geolocation is not available on your device right now!');
+							// //return;
+						// }
+						// //get properties from Ti.Geolocation
+						// var longitude = e.coords.longitude;
+						// var latitude = e.coords.latitude;
+						// var altitude = e.coords.altitude;
+						// var heading = e.coords.heading;
+						// var accuracy = e.coords.accuracy;
+						// var speed = e.coords.speed;
+						// var timestamp = e.coords.timestamp;
+						// var altitudeAccuracy = e.coords.altitudeAccuracy;
+						// //Now, apply the longitude and latitude properties to our mapview
+						// mapview.region = {latitude: latitude, longitude: longitude, latitudeDelta:0.02, longitudeDelta:0.02};
+						// mapview.setLocation(mapview.region);
+					// });
 				});
 			}
 			else {

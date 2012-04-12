@@ -40,4 +40,5 @@
         <manifest/>
     </android>
     <modules/>
+    <property name="ti.android.google.map.api.key">0bF7dFYrq6lu4gQMQs6B96kp1d5TNwQ_RSQqS0g</property>
 </ti:app>
