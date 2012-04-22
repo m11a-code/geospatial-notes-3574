@@ -71,6 +71,22 @@
 			bottom : 130
 		});
 
+		var recButton = Ti.UI.createButton({
+			title : 'Record audio note',
+			height : 60,
+			width : '90%',
+			bottom : 60
+		});
+
+		recButton.addEventListener('click', function() {
+			Ti.App.fireEvent('recorder:recordNote', {
+				latitude : 0,
+				longitude : 0,
+				friend : 'Anthony'
+			});
+		});
+		win.add(recButton);
+
 		saveButton.addEventListener('click', function() {
 			Ti.App.Properties.setString(latitudeField.value, noteField.value);
 			Ti.App.Properties.setString(longitudeField.value, noteField.value);
@@ -149,7 +165,6 @@
 			}, 1000 * 30);
 			//30 second wait to set the notification timer
 		});
-		
 
 		win.add(latitudeField);
 		win.add(longitudeField);

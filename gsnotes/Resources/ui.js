@@ -11,18 +11,6 @@
 			touchEnabled: false
 		});
 		
-		var activity = Ti.Android.currentActivity;
-		
-		activity.onCreateOptionsMenu = function(e) {
-			var menu = e.menu;
-			var menuItem = menu.add({ title: "Settings" });
-				menuItem.setIcon(Titanium.Android.R.drawable.ic_menu_preferences);
-				menuItem.addEventListener("click", function(e) {
-					var settingsWindow = gn.ui.createSettingsWindow();
-					settingsWindow.open();
-			});
-		}
-	
 		win.add(Titanium.Facebook.createLoginButton({
 			top : 50,
 			style : 'wide'
@@ -49,8 +37,7 @@
 			left : 10
 		});
 		bGeolocation.addEventListener('click', function() {
-			var winGeolocation = gn.ui.createGeolocationWindow();
-			winGeolocation.open();
+			gn.ui.createGeolocationWindow().open();
 		});
 		win.add(bGeolocation);
 
@@ -61,8 +48,7 @@
 			bottom : 70,
 		});
 		bLocation.addEventListener('click', function() {
-			var winLocation = gn.ui.createLocationWindow();
-			winLocation.open();
+			gn.ui.createLocationWindow().open();
 		});
 		win.add(bLocation);
 
@@ -90,7 +76,6 @@
 			winOptions.open();
 		});
 		win.add(bOptions);
-		//win.add(view);
 
 		var bGPS = Ti.UI.createButton({
 			title : 'GPS',
@@ -120,30 +105,20 @@
 			exitOnClose:false,
 			fullscreen:false
 		});
-		
-		
 		//rows
-		
-		var valuesColTen = [];
- 
-		for (var i = 0; i < 11; i++) {
-		    valuesColTen.push(Ti.UI.createPickerRow({title: i+'', value:i}));
-		}
 		
 		var valuesColHundred = [];
 		
-		for (var i = 0; i < 100; i=i+5) {
-		    valuesColHundred.push(Ti.UI.createPickerRow({title: "."+i+" mi", value:i}));
+		for (var i = 0; i < 100; i=i+10) {
+		    valuesColHundred.push(Ti.UI.createPickerRow({
+		    	title: i+" %",
+		    	value:i
+		    }));
 		}
 		
 		//columns
-		
-		var columnValuesTen = Ti.UI.createPickerColumn( {
-		    rows: valuesColTen, font: {fontSize: "12"}, width: '30%'
-		});
- 
 		var columnValuesHundred = Ti.UI.createPickerColumn( {
-		    rows: valuesColHundred, font: {fontSize: "12"}, width: '70%'
+		    rows: valuesColHundred, font: {fontSize: "12"}, width: '100%'
 		});
  
 		var picker = Ti.UI.createPicker({
@@ -151,7 +126,7 @@
 			top: '20%',
 		    useSpinner: true,
 		    selectionIndicator: true,
-		    columns: [columnValuesTen, columnValuesHundred]
+		    columns: [columnValuesHundred]
 		});
 		
 		var noteFilterButton = Ti.UI.createButton({
@@ -160,8 +135,7 @@
 			bottom : 80
 		});
 		noteFilterButton.addEventListener('click', function() {
-			var noteFilterWindow = gn.ui.createNoteFilterWindow();
-			noteFilterWindow.open();
+			gn.ui.createNoteFilterWindow().open();
 		});
  
 		// turn on the selection indicator (off by default)
@@ -210,15 +184,8 @@
 		//need to get grasp of separating information into files more efficiently
 		 
 		tableView.addEventListener('click', function(e){
-		    if(e.row.hasCheck){
-		        for(var i in tableData){
-		            tableData[i].hasCheck = false;
-		        }
-		        tableView.data = tableData;
-		    } else {
-		        tableData[e.index].hasCheck = true;
-		        tableView.data = tableData;
-		    }
+		    e.row.hasCheck = !e.row.hasCheck;
+		    tableView.data = tableData;
 		});
 		
 		tempView.add(tableView);
