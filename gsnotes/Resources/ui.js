@@ -116,7 +116,7 @@
 		var win = Ti.UI.createWindow({
 			title : 'settings_screen',
 			//fullscreen: true,
-			backgroundColor : 'green',
+			backgroundColor : 'black',
 			exitOnClose:false,
 			fullscreen:false
 		});

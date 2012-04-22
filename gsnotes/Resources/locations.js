@@ -20,7 +20,7 @@
 
 		var win = Ti.UI.createWindow({
 			title : 'inbox',
-			backgroundColor : 'blue',
+			backgroundColor : 'black',
 			exitOnClose : false,
 			fullscreen : false
 		});
