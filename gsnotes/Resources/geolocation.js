@@ -153,7 +153,7 @@
 		var mapview = Titanium.Map.createView({
 			height : '100%',
 			mapType : Titanium.Map.STANDARD_TYPE,
-			region : {
+			region : {								//London
 				latitude : 51.50015,
 				longitude : -0.12623,
 				latitudeDelta : 0.02,
@@ -200,7 +200,8 @@
 					longitudeDelta : 0.02
 				};
 				mapview.setLocation(mapview.region);
-			} else {
+			}
+			else {
 				Titanium.UI.createAlertDialog({
 					title : 'Geolocation',
 					message : 'Your device has geo turned off - turn it on please.',
