@@ -33,7 +33,17 @@
 
 		return db.execute(query);
 	};
-
+	
+	gn.db.getNote = function(params) {
+		var query = "SELECT * FROM `notes` WHERE noteID='" + params.noteID + "' LIMIT 1";
+		return db.execute(query);
+	};
+	
+	gn.db.deleteNote = function(params) {
+		var query = "DELETE FROM `notes` WHERE noteID='" + params.noteID + "'";
+		return db.execute(query);
+	};
+	
 	gn.db.saveNote = function(params) {
 		// Use parameters for all the note content
 		// Or an array?

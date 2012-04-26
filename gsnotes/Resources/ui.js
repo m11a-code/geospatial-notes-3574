@@ -207,7 +207,77 @@
 		win.add(tempView);
 		return win;
 	};
+	
+	gn.ui.createNoteWindow = function(params) {
+		data = gn.db.getNote({
+			noteID : params.noteID
+		});
+		
+		
+		if( data.isValidRow() && data.getRowCount() > 0) {
+			var win = Ti.UI.createWindow({
+				title : data.fieldByName('noteName'),
+				backgroundColor : 'white',
+				exitOnClose : false,
+				fullscreen : true
+			});
+			
 
+			var content = Ti.UI.createLabel({
+				html : '<b>Created</b>: <br />' + new Date(data.fieldByName('noteDateCreated') * 100) + '<br />' 
+						+ '<b>Longitude:</b><br />' + data.fieldByName('noteLongitude') + '<br />'
+						+ '<b>Latitude:</b><br />' + data.fieldByName('noteLatitude') + '<br />'
+						+ '<b>Content:</b><br />' + data.fieldByName('noteContent'),
+				color : 'black',
+				top : '15px'
+			});
+			
+			var deleteButton =  Titanium.UI.createButton({
+			   title: 'Delete Note',
+			   bottom: '10px',
+			   right: '10px',
+			   width: '30%',
+			   height: 50,
+			   noteID : data.fieldByName('noteID')
+			});
+			
+			deleteButton.addEventListener('click', function() {
+				var dialog = Titanium.UI.createAlertDialog({
+					title : 'Delete',
+    				message : 'Are you sure you want to delete this note?',
+				    buttonNames : ['Delete','Cancel'],
+				    cancel :1,
+				    noteID : this.noteID
+				});
+				dialog.show();
+				
+				
+				dialog.addEventListener('click', function(e) {
+
+					if(e.index){
+						// Cancel
+					} else {
+						// delete
+						gn.db.deleteNote({
+							noteID : this.noteID
+						});
+						
+						alert('Note deleted!');
+					}
+				})
+				
+			});
+			
+			win.add(deleteButton);
+			win.add(content);
+			
+			return win;
+		}
+		
+
+	};
+	
+	
 	gn.ui.createInboxWindow = function() {
 		var win = Ti.UI.createWindow({
 			title : 'All Notes',
@@ -229,8 +299,18 @@
 		while( data.isValidRow() )
 		{
 			var row = Ti.UI.createTableViewRow({
-				title : data.fieldByName('noteName') + '...' //should be noteName, I forgot to enter it in the only entry so it would show up as blank
+				title : data.fieldByName('noteName') + '...',
+				noteID : data.fieldByName('noteID'),
+				color : 'black'
 			});
+			
+			row.addEventListener('click', function(){
+				// Clicking on a note
+				gn.ui.createNoteWindow({
+					noteID : this.noteID
+				}).open();
+			});
+			
 			
 			table.appendRow(row);
 			
@@ -239,6 +319,7 @@
 		
 		
 		// Add optoin to create a dummy note
+		/*
 		var addDummy = Ti.UI.createTableViewRow({
 			title : 'Add dummy note'
 		});
@@ -258,7 +339,8 @@
 		});
 		
 		table.appendRow(addDummy);
-
+		*/
+		
 		return win;
 	};
 

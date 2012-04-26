@@ -104,6 +104,53 @@
 			right : '4%',
 			borderRadius : 3
 		});
+		
+		var data = gn.db.getNotes({
+			mode : 'all'
+		});
+		
+		while( data.isValidRow() ) {
+			var longitude = data.fieldByName('noteLongitude');
+			var latitude = data.fieldByName('noteLatitude');
+			
+			if( longitude %1 != 0 && latitude %1 != 0){
+				var newPin = Titanium.Map.createAnnotation({
+					latitude : latitude,
+					longitude : longitude,
+					title : data.fieldByName('noteName'),
+					subtitle : data.fieldByName('noteContent').substr(0,15),
+					noteID : data.fieldByName('noteID'),
+					pincolor : Titanium.Map.ANNOTATION_RED
+				});
+				
+				var leftAnnotationImage = Titanium.UI.createImageView({
+						image : 'images/smile.png',
+						width : 75,
+						height : 75,
+						noteID : data.fieldByName('noteID')
+				});
+				
+				// Click listener for each annoation
+				// Has to be added to mapview on Android
+				leftAnnotationImage.addEventListener('click', function() {
+					
+					gn.ui.createNoteWindow({
+						noteID : this.noteID
+					}).open();
+				});
+				
+				newPin.leftView = leftAnnotationImage;
+				mapview.addAnnotation(newPin);
+			}
+			data.next();
+		}
+		
+		
+		
+		
+		
+		
+		
 		buttonSearchTopView.addEventListener('click', function(e) {
 			if(noteSearchLocationTxtField.value !== '') {
 				Ti.Geolocation.forwardGeocoder(noteSearchLocationTxtField.value, function(e) {
