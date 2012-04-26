@@ -12,7 +12,7 @@
 			// latitude and longitude establish a point on the map
 			var latitude = e.latitude;
 			var longitude = e.longitude;
-			// altitude establishes how high the user is (there is a direct correlation with brownie intake)
+			// altitude establishes how high the user is (there is a direct correlation with brownie intake) ;)
 			var altitude = e.altitude;
 			// how fast is the user traveling?
 			var speed = e.speed;
@@ -53,10 +53,6 @@
 			textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER
 		});
 
-		// Ti.App.addEventListener('app:geoLocationUpdate', function(longLat) {
-			// latitudeField.value = longLat.lat;
-			// longitudeField.value = longLat.lon;
-		// });
 		var noteSearchLocationTxtField = Ti.UI.createTextField({
 			backgroundColor : '#FFFFFF',
 			top : '20%',
@@ -156,71 +152,8 @@
 						    message: "Note stored in inbox."
 						});
 						toast.show();
-						// setInterval(function() {
-							// var newlat = e.latitude;
-							// var newLong = e.longitude;
-							// if ( countdown == null){
-								// countdown = 5;
-							// }
-							// if(newLong / (lon * 1) <= 0.1 || (newLong / (lon * 1) > 1 && newLong / (lon * 1) <= 1.1)) {
-								// clearInterval(this);
-								// var data = getNotes({
-									// mode : 'nearby',
-									// params : {
-										// longitude : lon,
-										// latitude : lat
-									// }
-								// });
-								// var msg = 'Something went wrong -- no notes found, but there should have been one?';
-								// if(data[0] && data[0].noteContent) {
-									// msg = data[0].noteContent;
-								// }
-								// var n = Ti.UI.createNotification({
-									// message : "Geocoded reminder: " + msg
-								// });
-// 		
-								// // Set the duration to either Ti.UI.NOTIFICATION_DURATION_LONG or NOTIFICATION_DURATION_SHORT
-								// n.duration = Ti.UI.NOTIFICATION_DURATION_LONG;
-// 		
-								// // Setup the X & Y Offsets
-								// n.offsetX = 100;
-								// n.offsetY = 75;
-// 		
-								// // Make it a little bit interesting
-								// var countdownSeconds = setInterval(function() {
-									// countdown = countdown - 1;
-									// if(countdown < 0) {
-										// clearInterval(countdownSeconds);
-										// n.show();
-									// }
-								// }, 1000);
-							// } else {
-								// clearInterval(this);
-								// var msg = noteField.value;
-								// var n = Ti.UI.createNotification({
-									// message : "Geocoded reminder: " + msg
-								// });
-// 		
-								// // Set the duration to either Ti.UI.NOTIFICATION_DURATION_LONG or NOTIFICATION_DURATION_SHORT
-								// n.duration = Ti.UI.NOTIFICATION_DURATION_LONG;
-// 		
-								// // Setup the X & Y Offsets
-								// n.offsetX = 100;
-								// n.offsetY = 75;
-// 		
-								// // Make it a little bit interesting
-								// var countdownSeconds = setInterval(function() {
-									// countdown = countdown - 1;
-									// if(countdown < 0) {
-										// clearInterval(countdownSeconds);
-										// n.show();
-									// }
-								// }, 1000);
-							// }
-						// }, 1000 * 30);
-						// 30 second check time
-					}, 1000 * 5);
-					//30 second wait to set the notification timer
+					}, 1000 * 3);
+					//3 second wait to the spinning indicator window when saving a note.
 				});
 			}
 			else {

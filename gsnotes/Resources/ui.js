@@ -11,6 +11,21 @@
 			touchEnabled: false
 		});
 		
+		var geoEventListener = function(e) {
+			if (e.error) {
+				alert('Error: ' + e.error);
+			} else {
+				Ti.API.info(e.coords);
+			}
+		}
+		
+		if (Ti.Geolocation.locationServicesEnabled) {
+			Titanium.Geolocation.purpose = 'Get Current Location';
+			Titanium.Geolocation.addEventListener('location', geoEventListener);
+		} else {
+			alert('Please enable location services');
+		}
+		
 		win.add(Titanium.Facebook.createLoginButton({
 			top : 50,
 			style : 'wide'
@@ -37,7 +52,7 @@
 			left : 10
 		});
 		bGeolocation.addEventListener('click', function() {
-			gn.ui.createGeolocationWindow().open();
+			gn.ui.createGeolocationWindow();
 		});
 		win.add(bGeolocation);
 

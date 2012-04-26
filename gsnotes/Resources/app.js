@@ -9,12 +9,20 @@ Titanium.Facebook.permissions = ['read_stream', 'manage_pages'];
 
 Titanium.Facebook.addEventListener('login', function(e) {
 	if(e.success) {
-		//alert('Logged in');
+		var toast = Titanium.UI.createNotification({
+		    duration: Ti.UI.NOTIFICATION_DURATION_LONG,
+		    message: "Log in successful."
+		});
+		toast.show();
 	}
 });
 
 Titanium.Facebook.addEventListener('logout', function(e) {
-	alert('Logged out');
+	var toast = Titanium.UI.createNotification({
+	    duration: Ti.UI.NOTIFICATION_DURATION_LONG,
+	    message: "Log out successful."
+	});
+	toast.show();
 });
 var wins = gn.ui.createWelcomeScreen();
 wins.open();
