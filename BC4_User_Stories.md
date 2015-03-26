@@ -1,0 +1,2 @@
+Note: If you guys think there is anything else I could add to my currently added two user stories if not for this week but for the next build cycle, let me know and I will be more than willing to add that to what I currently have for now or an upcoming build cycle.
+-Matt
